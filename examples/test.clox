@@ -1,0 +1,7 @@
+var a = "konnichiha ";
+var b = "world!";
+
+a = "hello ";
+
+print a + b;
+
