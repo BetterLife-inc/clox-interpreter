@@ -227,6 +227,18 @@ static InterpretResult run() {
         break;
       }
 
+      case OP_GET_LOCAL: {
+        uint8_t slot = (int)AS_NUMBER(pop());
+        push(vm.stack[slot]);
+        break;
+      }
+
+      case OP_SET_LOCAL: {
+        uint8_t slot = (int)AS_NUMBER(pop());
+        vm.stack[slot] = peek(0);
+        break;
+      }
+
       // Return
       case OP_RETURN:
         return INTERPRET_OK;
