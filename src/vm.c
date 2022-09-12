@@ -102,7 +102,11 @@ static Value readConstant(uint8_t instruction) {
  }
 
 static InterpretResult run() {
+  #define READ_SHORT() \
+  (vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
+
   #define READ_STRING() AS_STRING(pop())
+
   #define BINARY_OP(valueType, op) \
   do { \
     if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) { \
@@ -238,6 +242,19 @@ static InterpretResult run() {
         vm.stack[slot] = peek(0);
         break;
       }
+  
+      case OP_JUMP: {
+        vm.ip += READ_SHORT();
+        break;
+      }
+
+      case OP_JUMP_IF_FALSE: {
+        uint16_t jump = READ_SHORT();
+        if (isFalsey(peek(0))) {
+          vm.ip += jump;
+        }
+        break;
+      }
 
       // Return
       case OP_RETURN:
@@ -245,6 +262,8 @@ static InterpretResult run() {
     }
   }
 
+  #undef READ_SHORT
+  #undef READ_STRING
   #undef BINARY_OP
 }
 
